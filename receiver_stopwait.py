@@ -1,3 +1,49 @@
+"""
+receiver_stopwait.py
+CP372 Assignment 2 - Stop-and-Wait receiver (Parts A and B)
+
+This program waits for packets from the sender and saves the file.
+It only accepts the packet it's expecting next. For every packet it
+accepts, it sends back an ACK. If a packet is a duplicate (the sender
+sent it again because our ACK got lost), we don't save it twice, we
+just send the ACK again.
+
+For Part B, the receiver can randomly drop packets to pretend the
+network lost them. Use --loss to set how often (0.1 = 10%).
+
+How to run it (start this before the sender):
+    python3 receiver_stopwait.py
+    python3 receiver_stopwait.py --loss 0.2      # drop 20% of packets
+
+Other options:
+    --port 12000        port to listen on (must match the sender)
+    --outdir received   folder where received files are saved
+    --verbose           print every packet that comes in or goes out
+
+The receiver keeps running after a file is done, so you can send
+lots of files in a row for testing. Press Ctrl+C to stop it.
+
+Our packet format:
+Every packet starts with an 11-byte header, and the file data
+(the payload) comes after it.
+
+    +--------+-------------+-------------+-------------+---------------+
+    | Type   | Seq Number  | ACK Number  | Length      | Payload       |
+    | 1 byte | 4 bytes     | 4 bytes     | 2 bytes     | Length bytes  |
+    +--------+-------------+-------------+-------------+---------------+
+
+Packet types:
+    START (1)  tells the receiver a file is coming. The payload holds the
+               file name and size, like "notes.txt|5000"
+    DATA  (2)  one piece of the file
+    ACK   (3)  sent back by the receiver. The ACK Number says which
+               packet it's acknowledging
+    END   (4)  tells the receiver the whole file has been sent
+
+Sequence numbers:
+    START is 0, the DATA packets are 1, 2, 3 ... N, and END is N+1.
+"""
+
 import argparse
 import os
 import random

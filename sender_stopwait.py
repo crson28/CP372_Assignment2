@@ -1,3 +1,40 @@
+"""
+sender_stopwait.py
+CP372 Assignment 2 - Stop-and-Wait sender (Parts A and B)
+
+This program sends a file to the receiver using UDP. UDP doesn't make sure
+packets arrive, so we add our own reliability: every packet gets a sequence
+number, and the sender waits for an ACK before sending the next one. If no
+ACK comes back before the timer runs out, the packet is sent again.
+
+How to run it (start receiver_stopwait.py first):
+    python3 sender_stopwait.py myfile.txt        # send a real file
+    python3 sender_stopwait.py --generate 1MB    # send random data instead
+
+Other options you can add:
+    --port 12000      port the receiver is listening on
+    --timeout 0.05    how long to wait for an ACK (in seconds)
+    --chunk 4096      how many bytes of the file go in each packet
+    --csv results.csv save the results to a CSV file for Part D
+    --verbose         print every packet that is sent or received
+
+What the sender does, step by step:
+  1. Reads the file (or makes random data)
+  2. Sends a START packet so the receiver knows a file is coming
+  3. Splits the file into DATA packets
+  4. Sends one packet and starts the timer
+  5. Waits for the ACK for that packet
+  6. If the timer runs out, sends the same packet again
+  7. Repeats until every packet has been ACKed
+  8. Sends an END packet to say the transfer is done
+
+At the end it prints the transfer time, throughput and number of
+retransmissions, which we need for Part D.
+
+The packet format is the same as in receiver_stopwait.py (see the
+comment at the top of that file).
+"""
+
 import argparse
 import csv
 import os
