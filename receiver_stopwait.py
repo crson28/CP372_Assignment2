@@ -161,7 +161,7 @@ def main():
                 continue
 
             # ---- Duplicate or out-of-order packet: ignore its content, but
-            # re-ACK the last in-order packet so the sender can recover if our
+            # just ACK it again in case our first ACK was lost
             # previous ACK was lost (rdt 3.0 behaviour).
             if last_ack is not None and seq < expected:
                 send_ack(addr, seq)
