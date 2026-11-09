@@ -1,0 +1,34 @@
+Part B - Simulated packet loss (receiver_stopwait.py --loss)
+1 MB file, 5 runs per loss rate. Each received file is compared with the original.
+
+ Loss | Avg time (s) | Avg retransmissions | Files correct
+------------------------------------------------------------
+   0% |        0.022 |                 0.0 |           5/5
+  10% |        1.516 |                29.0 |           5/5
+  20% |        3.385 |                65.4 |           5/5
+  30% |        5.586 |               108.4 |           5/5
+
+The sender still transfers the whole file correctly at every loss rate
+by timing out and retransmitting the dropped packets.
+
+All runs:
+   0%   trial 1   time 0.022 s   retransmissions    0   file OK
+   0%   trial 2   time 0.022 s   retransmissions    0   file OK
+   0%   trial 3   time 0.021 s   retransmissions    0   file OK
+   0%   trial 4   time 0.021 s   retransmissions    0   file OK
+   0%   trial 5   time 0.021 s   retransmissions    0   file OK
+  10%   trial 1   time 1.455 s   retransmissions   28   file OK
+  10%   trial 2   time 1.310 s   retransmissions   25   file OK
+  10%   trial 3   time 1.726 s   retransmissions   33   file OK
+  10%   trial 4   time 1.469 s   retransmissions   28   file OK
+  10%   trial 5   time 1.621 s   retransmissions   31   file OK
+  20%   trial 1   time 2.902 s   retransmissions   56   file OK
+  20%   trial 2   time 2.794 s   retransmissions   54   file OK
+  20%   trial 3   time 2.955 s   retransmissions   57   file OK
+  20%   trial 4   time 4.902 s   retransmissions   95   file OK
+  20%   trial 5   time 3.371 s   retransmissions   65   file OK
+  30%   trial 1   time 5.462 s   retransmissions  106   file OK
+  30%   trial 2   time 5.159 s   retransmissions  100   file OK
+  30%   trial 3   time 5.465 s   retransmissions  106   file OK
+  30%   trial 4   time 5.260 s   retransmissions  102   file OK
+  30%   trial 5   time 6.586 s   retransmissions  128   file OK
