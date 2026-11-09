@@ -27,7 +27,7 @@ while True:
 
   packet = int(message)
 
-  if random.random() < LOSS_RATE:
+  if random.random() < loss_rate:
     print(f'packet {packet} has been lost')
     continue
 
