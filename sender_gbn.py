@@ -28,51 +28,51 @@ print('sender started')
 
 
 while base < total_packets:
-  while (nextseqnum < base + window_size
+    while (nextseqnum < base + window_size
            and nextseqnum < total_packets):
 
 
-      sender.sento(
+      sender.sendto(
             str(nextseqnum).encode(), (HOST, PORT)
         )
 
       print(f'sent packet {nextseqnum}')
-        transmissions += 1
+      transmissions += 1
 
 
-        if base == nextseqnum:
+      if base == nextseqnum:
             timer_start = time.monotonic()   #this starts a timer for the oldest unacked packet
 
-        nextseqnum += 1
+      nextseqnum += 1
 
 
 
 
     try:
-          data, address = sender.recvfrom(1024)
-          ack = int(data.decode())
-          print(f'received ack: {ack}')
+        data, address = sender.recvfrom(1024)
+        ack = int(data.decode())
+        print(f'received ack: {ack}')
 
-          if base <= ack  < nextseqnum:
-              base = ack + 1   
-              prinftf('Window slides to {base}')   
-              if base == nextseqnum:
+        if base <= ack  < nextseqnum:
+            base = ack + 1   
+            print(f'Window slides to {base}')   
+            if base == nextseqnum:
                   timer_start = None
-              else:
+            else:
                   timer_start = time.monotonic()
 
-  except socket.timeout:
+    except socket.timeout:
         pass
 
 
-  if (timer_start is not None and time.monotonic() - timer_start >= TIMEOUT):
+    if (timer_start is not None and time.monotonic() - timer_start >= timeout):
       print(f'\ntimeout, retransmitting packets {base} to {nextseqnum - 1}')
       timeouts +=1   #checking timeout for oldest unacked packet
 
       for packet in range (base, nextseqnum):
           sender.sendto(str(packet).encode(), (HOST, PORT))
           print(f'retransmitted packet {packet}')  # retransmits all outstanding packets 
-          transmission+=1
+          transmissions+=1
           retransmissions+=1
       timer_start = time.monotonic()
 
