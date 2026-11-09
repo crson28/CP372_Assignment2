@@ -14,7 +14,7 @@ expected = 0
 
 print("receiver started")
 
-print(f"packet loss rate: {LOSS_RATE * 100:.0f}%")
+print(f"packet loss rate: {loss_rate * 100:.0f}%")
 
 while True:
   data, address = receiver.recvfrom(1024)
