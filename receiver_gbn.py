@@ -1,3 +1,65 @@
+"""
+sender_gbn.py
+CP372 Assignment 2 - Go-Back-N Sender
+
+This program transfers files using UDP and the Go-Back-N
+sliding window protocol.
+
+The sender divides a file into packets and sends multiple
+packets without waiting for individual acknowledgments.
+
+It maintains:
+    base        - oldest unacknowledged packet
+    nextseqnum  - next packet to send
+    window_size - maximum outstanding packets
+
+When an ACK is received, the sender slides its window
+forward. If a timeout occurs, all unacknowledged packets
+in the window are retransmitted.
+
+The sender also measures transfer time, throughput,
+retransmissions, and protocol efficiency. Results are
+saved to a CSV file for performance analysis.
+
+How to run (start the receiver first):
+    python sender_gbn.py test_10kb.bin
+
+Specify a window size:
+    python sender_gbn.py test_10kb.bin --window 4
+
+Run with a loss-rate label:
+    python sender_gbn.py test_10kb.bin --window 4 --loss-label 10%
+
+Other options:
+    --host        Receiver IP address (default: 127.0.0.1)
+    --port        Receiver port (default: 12001)
+    --window      Sliding window size (default: 4)
+    --timeout     Timeout in seconds (default: 0.2)
+    --payload     Packet payload size (default: 1024 bytes)
+    --csv         Results CSV file (default: gbn_results.csv)
+    --verbose     Print individual packet events
+
+Note: --loss-label only labels the results. Actual packet
+loss is configured on the receiver.
+
+Packet format:
+    Type (1 byte)
+    Sequence Number (4 bytes)
+    ACK Number (4 bytes)
+    Payload Length (2 bytes)
+    Payload (up to 1024 bytes by default)
+
+Packet types:
+    START (1) - begins a file transfer
+    DATA  (2) - contains file data
+    ACK   (3) - acknowledges received packets
+    END   (4) - completes the transfer
+
+Sequence numbers:
+    START = 0
+    DATA  = 1, 2, 3, ... N
+    END   = N + 1
+"""
 
 import argparse
 import os
