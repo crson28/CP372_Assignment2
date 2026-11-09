@@ -160,9 +160,9 @@ def main():
                           f"[{status}]  packets dropped by loss sim: {dropped}")
                 continue
 
-            # ---- Duplicate or out-of-order packet: ignore its content, but
-            # just ACK it again in case our first ACK was lost
-            # previous ACK was lost (rdt 3.0 behaviour).
+            # ---- Duplicate packet (we already saved it): don't save it again,
+            # just ACK it again in case our first ACK was lost.
+
             if last_ack is not None and seq < expected:
                 send_ack(addr, seq)
             # anything else (e.g. seq > expected) is simply ignored
