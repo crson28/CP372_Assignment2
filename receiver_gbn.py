@@ -1,46 +1,51 @@
+
 """
-sender_gbn.py
-CP372 Assignment 2 - Go-Back-N Sender
+receiver_gbn.py
+CP372 Assignment 2 - Go-Back-N Receiver
 
-This program transfers files using UDP and the Go-Back-N
-sliding window protocol.
+This program receives files over UDP using the Go-Back-N
+protocol and saves them to a local directory.
 
-The sender divides a file into packets and sends multiple
-packets without waiting for individual acknowledgments.
+The receiver only accepts packets in the correct order.
+It maintains an expected sequence number and discards
+any packets that arrive out of order.
 
-It maintains:
-    base        - oldest unacknowledged packet
-    nextseqnum  - next packet to send
-    window_size - maximum outstanding packets
+For every received packet, the receiver sends a cumulative
+ACK indicating the highest consecutively received packet.
 
-When an ACK is received, the sender slides its window
-forward. If a timeout occurs, all unacknowledged packets
-in the window are retransmitted.
+Example:
+    Expected packet: 3
+    Received packet: 4
+    Action: Discard packet 4
+    Response: Send ACK2
 
-The sender also measures transfer time, throughput,
-retransmissions, and protocol efficiency. Results are
-saved to a CSV file for performance analysis.
+The receiver can also simulate packet loss by randomly
+dropping incoming packets based on a specified loss rate.
 
-How to run (start the receiver first):
-    python sender_gbn.py test_10kb.bin
+How to run (start before the sender):
+    python receiver_gbn.py
 
-Specify a window size:
-    python sender_gbn.py test_10kb.bin --window 4
+Simulate 10% packet loss:
+    python receiver_gbn.py --loss 0.10
 
-Run with a loss-rate label:
-    python sender_gbn.py test_10kb.bin --window 4 --loss-label 10%
+Simulate 20% packet loss:
+    python receiver_gbn.py --loss 0.20
+
+Show detailed packet information:
+    python receiver_gbn.py --loss 0.10 --verbose
 
 Other options:
-    --host        Receiver IP address (default: 127.0.0.1)
-    --port        Receiver port (default: 12001)
-    --window      Sliding window size (default: 4)
-    --timeout     Timeout in seconds (default: 0.2)
-    --payload     Packet payload size (default: 1024 bytes)
-    --csv         Results CSV file (default: gbn_results.csv)
-    --verbose     Print individual packet events
+    --host       IP address (default: 127.0.0.1)
+    --port       Listening port (default: 12001)
+    --loss       Packet loss probability (default: 0.0)
+    --outdir     Output folder (default: received_gbn)
+    --verbose    Print packet and ACK information
 
-Note: --loss-label only labels the results. Actual packet
-loss is configured on the receiver.
+Packet loss testing:
+    0.00 = 0% loss
+    0.10 = 10% loss
+    0.20 = 20% loss
+    0.30 = 30% loss
 
 Packet format:
     Type (1 byte)
@@ -55,11 +60,18 @@ Packet types:
     ACK   (3) - acknowledges received packets
     END   (4) - completes the transfer
 
-Sequence numbers:
-    START = 0
-    DATA  = 1, 2, 3, ... N
-    END   = N + 1
+The receiver reconstructs the original file by writing
+accepted DATA packets to the output directory.
+
+Duplicate and out-of-order DATA packets are discarded.
+The receiver responds with the most recent cumulative ACK.
+
+The receiver continues running after a transfer finishes,
+allowing multiple files to be tested without restarting.
+
+Press Ctrl+C to stop the receiver.
 """
+
 
 import argparse
 import os
