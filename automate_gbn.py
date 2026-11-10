@@ -319,6 +319,7 @@ def run_trial(filename, loss, trial):
             "--port", str(PORT),
             "--window", str(WINDOW_SIZE),
             "--timeout", str(TIMEOUT),
+            "--payload", "4096",
             "--loss-label", f"{loss:.0%}",
             "--csv", str(BASE_DIR / "gbn_sender_raw.csv")
         ]
